@@ -1,36 +1,33 @@
 apiVersion: apps/v1
-kind: Deployment # Kubernetes resource kind we are creating
+kind: Deployment
 metadata:
   name: tpfoyer-devops-deployment
 spec:
   selector:
     matchLabels:
-      app: tpfoyer-devops
-  replicas: 2 # Number of replicas that will be created for this deployment
+      app: santa  # Correspond maintenant aux labels du template
+  replicas: 2
   template:
     metadata:
       labels:
-        app: santa
+        app: santa  # Label correspondant au selector
     spec:
       containers:
         - name: santa
-          image: houssembwfi/tpfoyer-devops:latest # Image that will be used to containers in the cluster
+          image: houssembwfi/tpfoyer-devops:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080 # The port that the container is running on in the cluster
-
-
+            - containerPort: 8080  # Le port sur lequel le conteneur écoute
 ---
-
-apiVersion: v1 # Kubernetes API version
-kind: Service # Kubernetes resource kind we are creating
-metadata: # Metadata of the resource kind we are creating
+apiVersion: v1
+kind: Service
+metadata:
   name: santa-ssvc
 spec:
   selector:
     app: santa
   ports:
     - protocol: "TCP"
-      port: 8081 # The port that the service is running on in the cluster
-      targetPort: 8081 # The port exposed by the service
-  type: LoadBalancer # type of the service.
+      port: 8081
+      targetPort: 8081
+  type: LoadBalancer
