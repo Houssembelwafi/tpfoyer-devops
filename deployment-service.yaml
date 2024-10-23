@@ -1,51 +1,91 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: mysql-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password
+            - name: MYSQL_DATABASE
+              value: db
+          ports:
+            - containerPort: 3306
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "mysqladmin ping -h localhost -u root -p$MYSQL_ROOT_PASSWORD"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: tpfoyer-devops-deployment
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: santa
-  replicas: 1
   template:
     metadata:
       labels:
         app: santa
     spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: busybox
+          command: ['sh', '-c', 'until nc -z mysql-service 3306; do echo waiting for mysql; sleep 2; done;']
       containers:
         - name: santa-backend
           image: houssembwfi/tpfoyer-devops:latest
-          imagePullPolicy: Always
           ports:
-            - containerPort: 8089  # Correspond au port défini dans application.properties
+            - containerPort: 8089
           env:
             - name: DB_URL
               value: jdbc:mysql://mysql-service:3306/db?createDatabaseIfNotExist=true
             - name: DB_USERNAME
               value: root
             - name: DB_PASSWORD
-              value: root_password  # À configurer correctement, ici c'est juste un exemple
+              value: root_password
             - name: SERVER_PORT
-              value: "8089"  # Correspond à la configuration dans application.properties
+              value: "8089"
             - name: SERVER_CONTEXT_PATH
-              value: /tpfoyer  # Contexte de l'application défini dans application.properties
-
-          readinessProbe:  # Ajout de la readiness probe
+              value: /tpfoyer
+          readinessProbe:
             httpGet:
-              path: /tpfoyer/actuator/health  # L'URL d'health check doit être accessible à ce chemin
+              path: /tpfoyer/actuator/health
               port: 8089
             initialDelaySeconds: 30
             periodSeconds: 10
 
-        - name: mysql  # Conteneur pour MySQL
-          image: mysql:8.0
-          env:
-            - name: MYSQL_ROOT_PASSWORD
-              value: root_password  # Remplace par ton mot de passe réel
-            - name: MYSQL_DATABASE
-              value: db  # Correspond au nom de la base dans application.properties
-          ports:
-            - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: mysql
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+  type: ClusterIP
 
 ---
 apiVersion: v1
@@ -57,20 +97,6 @@ spec:
     app: santa
   ports:
     - protocol: TCP
-      port: 8089  # Le port exposé par l'application
-      targetPort: 8089  # Correspond au port interne de l'application (application.properties)
+      port: 8089
+      targetPort: 8089
   type: LoadBalancer
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: mysql-service
-spec:
-  selector:
-    app: santa
-  ports:
-    - protocol: TCP
-      port: 3306  # Port MySQL pour le service de base de données
-      targetPort: 3306
-  type: ClusterIP
