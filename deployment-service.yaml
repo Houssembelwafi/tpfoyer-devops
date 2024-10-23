@@ -5,19 +5,48 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: santa  # Correspond maintenant aux labels du template
+      app: santa
   replicas: 2
   template:
     metadata:
       labels:
-        app: santa  # Label correspondant au selector
+        app: santa
     spec:
       containers:
-        - name: santa
+        - name: santa-backend
           image: houssembwfi/tpfoyer-devops:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 8080  # Le port sur lequel le conteneur écoute
+            - containerPort: 8089  # Correspond au port défini dans application.properties
+          env:
+            - name: DB_URL
+              value: jdbc:mysql://mysql-service:3306/db?createDatabaseIfNotExist=true
+            - name: DB_USERNAME
+              value: root
+            - name: DB_PASSWORD
+              value: root_password  # À configurer correctement, ici c'est juste un exemple
+            - name: SERVER_PORT
+              value: "8089"  # Correspond à la configuration dans application.properties
+            - name: SERVER_CONTEXT_PATH
+              value: /tpfoyer  # Contexte de l'application défini dans application.properties
+
+          readinessProbe:  # Ajout de la readiness probe
+            httpGet:
+              path: /tpfoyer/actuator/health  # L'URL d'health check doit être accessible à ce chemin
+              port: 8089
+            initialDelaySeconds: 30
+            periodSeconds: 10
+
+        - name: mysql  # Conteneur pour MySQL
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: root_password  # Remplace par ton mot de passe réel
+            - name: MYSQL_DATABASE
+              value: db  # Correspond au nom de la base dans application.properties
+          ports:
+            - containerPort: 3306
+
 ---
 apiVersion: v1
 kind: Service
@@ -27,7 +56,21 @@ spec:
   selector:
     app: santa
   ports:
-    - protocol: "TCP"
-      port: 8089
-      targetPort: 8089
+    - protocol: TCP
+      port: 8089  # Le port exposé par l'application
+      targetPort: 8089  # Correspond au port interne de l'application (application.properties)
   type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  selector:
+    app: santa
+  ports:
+    - protocol: TCP
+      port: 3306  # Port MySQL pour le service de base de données
+      targetPort: 3306
+  type: ClusterIP
