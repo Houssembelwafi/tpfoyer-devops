@@ -5,12 +5,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD:  
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  
-      MYSQL_DATABASE: devops
+      MYSQL_DATABASE: db
     ports:
       - "3306:3306"
 
   spring-app:
-    image: ghaithameur/5artic3-g5-devops:latest
+    image: houssembwfi/tpfoyer-devops:latest
     ports:
       - "8090:8089"
     depends_on:
