@@ -16,5 +16,5 @@ services:
     depends_on:
       - mysql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/devops
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-service:3306/db?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
