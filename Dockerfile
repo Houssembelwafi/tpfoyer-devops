@@ -8,7 +8,7 @@ WORKDIR /app
 COPY tp-foyer-*.jar /app/tp-foyer.jar
 
 # Expose the port that your Spring Boot app will run on
-EXPOSE 8081
+EXPOSE 8089
 
 # Define the command to run the JAR file
 ENTRYPOINT ["java", "-jar", "/app/tp-foyer.jar"]
