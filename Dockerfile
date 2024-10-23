@@ -4,7 +4,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Copy the latest release of the JAR file into the container
-# Assumes that the jar file is located in the same directory as the Dockerfile
+# Make sure your JAR file is named tp-foyer-*.jar or adjust accordingly
 COPY tp-foyer-*.jar /app/tp-foyer.jar
 
 # Expose the port that your Spring Boot app will run on
