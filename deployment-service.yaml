@@ -28,6 +28,6 @@ spec:
     app: santa
   ports:
     - protocol: "TCP"
-      port: 8081
-      targetPort: 8081
+      port: 8089
+      targetPort: 8089
   type: LoadBalancer
