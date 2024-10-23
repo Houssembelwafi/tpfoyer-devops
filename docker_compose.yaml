@@ -3,8 +3,7 @@ services:
   mysql:
     image: mysql:latest
     environment:
-      MYSQL_ROOT_PASSWORD: your_root_password  # Remplacez par un mot de passe sécurisé
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'no'  
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'  
       MYSQL_DATABASE: db
     ports:
       - "3306:3306"
@@ -18,4 +17,4 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root # Ajoutez cette ligne si vous utilisez un mot de passe
+     
