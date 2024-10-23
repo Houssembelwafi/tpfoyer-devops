@@ -4,8 +4,7 @@ FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 # Copy the latest release of the JAR file into the container
-# Make sure your JAR file is named tp-foyer-*.jar or adjust accordingly
-COPY tp-foyer-*.jar /app/tp-foyer.jar
+COPY target/tp-foyer-5.0.0.jar /app/tp-foyer.jar
 
 # Expose the port that your Spring Boot app will run on
 EXPOSE 8089
