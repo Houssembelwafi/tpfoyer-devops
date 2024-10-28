@@ -27,7 +27,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "mysqladmin ping -h localhost -u root -p$MYSQL_ROOT_PASSWORD"
+                - "mysqladmin ping -h localhost -u root -proot_password"
             initialDelaySeconds: 30
             periodSeconds: 10
 
@@ -56,11 +56,11 @@ spec:
           ports:
             - containerPort: 8089
           env:
-            - name: DB_URL
+            - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://mysql-service:3306/db?createDatabaseIfNotExist=true
-            - name: DB_USERNAME
+            - name: SPRING_DATASOURCE_USERNAME
               value: root
-            - name: DB_PASSWORD
+            - name: SPRING_DATASOURCE_PASSWORD
               value: root_password
             - name: SERVER_PORT
               value: "8089"
@@ -91,7 +91,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: santa-ssvc
+  name: santa-service
 spec:
   selector:
     app: santa
