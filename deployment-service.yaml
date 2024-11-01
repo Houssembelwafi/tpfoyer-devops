@@ -27,7 +27,7 @@ spec:
               command:
                 - sh
                 - -c
-                - "mysqladmin ping -h localhost -u root -proot_password"
+                - "mysqladmin ping -h localhost -u root -proot_password || (echo 'MySQL not ready'; exit 1)"
             initialDelaySeconds: 30
             periodSeconds: 10
 
