@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   name: mysql-deployment
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: mysql
@@ -37,7 +36,6 @@ kind: Deployment
 metadata:
   name: tpfoyer-devops-deployment
 spec:
-  replicas: 1
   selector:
     matchLabels:
       app: santa
