@@ -22,7 +22,7 @@ services:
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/db?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: ''  # If you're allowing an empty password
+      SPRING_DATASOURCE_PASSWORD: root  # If you're allowing an empty password
     restart: unless-stopped  # Automatically restart the container unless it is stopped
 
 volumes:
