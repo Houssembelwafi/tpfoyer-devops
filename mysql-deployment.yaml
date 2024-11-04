@@ -27,7 +27,7 @@ spec:
           image: mysql:8.0
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: root_password
+              value: root  # Modifiez ici pour définir le mot de passe de root
             - name: MYSQL_DATABASE
               value: db
           ports:
