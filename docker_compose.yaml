@@ -5,12 +5,13 @@ services:
     image: mysql:latest
     container_name: houcem-mysql-service  # Name for easier reference
     environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      MYSQL_ROOT_PASSWORD: root # Set a root password for MySQL (recommended for better security)
       MYSQL_DATABASE: db
     ports:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql  # Persist MySQL data
+    restart: unless-stopped  # Restart unless manually stopped
 
   spring-app:
     image: houssembwfi/tpfoyer-devops:latest
@@ -21,8 +22,8 @@ services:
       - mysql  # Ensure MySQL starts before the Spring app
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://houcem-mysql-service:3306/db?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root  # If you're allowing an empty password
+      SPRING_DATASOURCE_USERNAME: root  # Match MySQL root username
+      SPRING_DATASOURCE_PASSWORD: root  # Match the MySQL root password set above
     restart: unless-stopped  # Automatically restart the container unless it is stopped
 
 volumes:
