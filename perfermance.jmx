@@ -1,42 +1,122 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.5">
     <hashTree>
-        <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
-            <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-            <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControllerGui" testclass="LoopController" enabled="true">
-                <boolProp name="LoopController.continuous" value="false"/>
-                <intProp name="LoopController.loops" value="1"/>
+        <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Sample Performance Test Plan" enabled="true">
+            <stringProp name="TestPlan.comments"></stringProp>
+            <boolProp name="TestPlan.functional_mode">false</boolProp>
+            <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+            <elementProp name="TestPlan.user_defined_variables" elementType="Arguments">
+                <collectionProp name="Arguments.arguments"/>
             </elementProp>
-            <intProp name="ThreadGroup.num_threads" value="10"/> <!-- Number of threads (users) -->
-            <intProp name="ThreadGroup.ramp_time" value="1"/> <!-- Ramp-up time in seconds -->
-            <longProp name="ThreadGroup.start_time" />
-            <longProp name="ThreadGroup.end_time" />
-            <boolProp name="ThreadGroup.scheduler" value="false"/>
-            <elementProp name="ThreadGroup.timer" elementType="ConstantTimer" guiclass="ConstantTimerGui" testclass="ConstantTimer" enabled="true">
-                <intProp name="ConstantTimer.delay" value="1000"/> <!-- Delay between requests (ms) -->
-            </elementProp>
+            <stringProp name="TestPlan.serialize_threadgroups">false</stringProp>
+        </TestPlan>
+        <hashTree>
+            <!-- Thread Group (Users) Configuration -->
+            <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group" enabled="true">
+                <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+                <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+                    <boolProp name="LoopController.continue_forever">false</boolProp>
+                    <intProp name="LoopController.loops">1</intProp>
+                </elementProp>
+                <stringProp name="ThreadGroup.num_threads">10</stringProp>
+                <stringProp name="ThreadGroup.ramp_time">5</stringProp>
+                <longProp name="ThreadGroup.duration">60</longProp>
+            </ThreadGroup>
             <hashTree>
-                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="GET /retrieve-all-blocs" enabled="true">
-                    <stringProp name="HTTPSampler.domain">localhost</stringProp> <!-- Server Domain -->
-                    <stringProp name="HTTPSampler.port">8089</stringProp> <!-- Server Port -->
-                    <stringProp name="HTTPSampler.protocol">http</stringProp> <!-- Protocol -->
-                    <stringProp name="HTTPSampler.path">/bloc/retrieve-all-blocs</stringProp> <!-- Path -->
-                    <stringProp name="HTTPSampler.method">GET</stringProp> <!-- HTTP Method -->
-                    <boolProp name="HTTPSampler.follow_redirects" value="true"/>
-                    <boolProp name="HTTPSampler.auto_redirects" value="false"/>
-                    <boolProp name="HTTPSampler.use_keepalive" value="true"/>
-                    <boolProp name="HTTPSampler.do_multipart" value="false"/>
-                    <boolProp name="HTTPSampler.monitor" value="false"/>
-                    <stringProp name="HTTPSampler.embedded_url_re" />
-                    <hashTree/>
+                <!-- Backend Request for Retrieve All Blocs -->
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Retrieve All Blocs" enabled="true">
+                    <stringProp name="HTTPSampler.domain">localhost</stringProp>
+                    <stringProp name="HTTPSampler.port">8089</stringProp>
+                    <stringProp name="HTTPSampler.protocol">http</stringProp>
+                    <stringProp name="HTTPSampler.path">/bloc/retrieve-all-blocs</stringProp> <!-- Updated Path -->
+                    <stringProp name="HTTPSampler.method">GET</stringProp>
+                    <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+                    <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
                 </HTTPSamplerProxy>
-                <hashTree>
-                    <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-                        <stringProp name="filename" />
-                    </ResultCollector>
-                    <hashTree/>
-                </hashTree>
+                <hashTree/>
+
+                <!-- Result Collector for detailed results -->
+                <ResultCollector guiclass="ResultCollectorGui" testclass="ResultCollector" testname="Result Collector" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                        <name>saveConfig</name>
+                        <value class="SampleSaveConfiguration">
+                            <time>true</time>
+                            <latency>true</latency>
+                            <timestamp>true</timestamp>
+                            <success>true</success>
+                            <label>true</label>
+                            <code>true</code>
+                            <message>false</message>
+                            <threadName>true</threadName>
+                            <dataType>true</dataType>
+                            <encoding>false</encoding>
+                            <assertions>true</assertions>
+                            <subresults>true</subresults>
+                            <responseData>false</responseData>
+                            <samplerData>false</samplerData>
+                            <xml>false</xml>
+                            <fieldNames>true</fieldNames>
+                            <responseHeaders>false</responseHeaders>
+                            <requestHeaders>false</requestHeaders>
+                            <responseDataOnError>false</responseDataOnError>
+                            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                            <assertionsResultsToSave>0</assertionsResultsToSave>
+                            <bytes>true</bytes>
+                            <sentBytes>true</sentBytes>
+                            <url>true</url>
+                            <hostname>true</hostname>
+                            <threadCounts>true</threadCounts>
+                            <sampleCount>true</sampleCount>
+                            <idleTime>true</idleTime>
+                            <connectTime>true</connectTime>
+                        </value>
+                    </objProp>
+                    <stringProp name="filename">performance_test_results.jtl</stringProp> <!-- JTL file for detailed results -->
+                </ResultCollector>
+                <hashTree/>
+
+                <!-- Summary Report Listener -->
+                <ResultCollector guiclass="SummaryReportGui" testclass="ResultCollector" testname="Summary Report" enabled="true">
+                    <boolProp name="ResultCollector.error_logging">false</boolProp>
+                    <objProp>
+                        <name>saveConfig</name>
+                        <value class="SampleSaveConfiguration">
+                            <time>true</time>
+                            <latency>true</latency>
+                            <timestamp>true</timestamp>
+                            <success>true</success>
+                            <label>true</label>
+                            <code>true</code>
+                            <message>false</message>
+                            <threadName>true</threadName>
+                            <dataType>true</dataType>
+                            <encoding>false</encoding>
+                            <assertions>true</assertions>
+                            <subresults>true</subresults>
+                            <responseData>false</responseData>
+                            <samplerData>false</samplerData>
+                            <xml>false</xml>
+                            <fieldNames>true</fieldNames>
+                            <responseHeaders>false</responseHeaders>
+                            <requestHeaders>false</requestHeaders>
+                            <responseDataOnError>false</responseDataOnError>
+                            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+                            <assertionsResultsToSave>0</assertionsResultsToSave>
+                            <bytes>true</bytes>
+                            <sentBytes>true</sentBytes>
+                            <url>true</url>
+                            <hostname>true</hostname>
+                            <threadCounts>true</threadCounts>
+                            <sampleCount>true</sampleCount>
+                            <idleTime>true</idleTime>
+                            <connectTime>true</connectTime>
+                        </value>
+                    </objProp>
+                    <stringProp name="filename">jmeter-summary-results.csv</stringProp> <!-- CSV file for summary results -->
+                </ResultCollector>
+                <hashTree/>
             </hashTree>
-        </ThreadGroup>
+        </hashTree>
     </hashTree>
-</TestPlan>
+</jmeterTestPlan>
