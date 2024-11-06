@@ -1,30 +1,36 @@
-version: '3.8'  # Specify the version of Docker Compose
+version: '3.8'
 
 services:
   mysql:
-    image: mysql:latest
-    container_name: houcem-mysql-service  # Name for easier reference
+    image: mysql:8.0
+    container_name: mysql-db
     environment:
-      MYSQL_ROOT_PASSWORD: root # Set a root password for MySQL (recommended for better security)
-      MYSQL_DATABASE: db
+      - MYSQL_DATABASE=devops
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql  # Persist MySQL data
-    restart: unless-stopped  # Restart unless manually stopped
+      - mysql_data:/var/lib/mysql
+    networks:
+      - springboot-mysql-network
 
-  spring-app:
+  springboot-app:
     image: houssembwfi/tpfoyer-devops:latest
-    container_name: spring-app-container  # Name for easier reference
-    ports:
-      - "8090:8089"  # Map external port 8090 to internal port 8089
-    depends_on:
-      - mysql  # Ensure MySQL starts before the Spring app
+    container_name: springboot-app
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://houcem-mysql-service:3306/db?createDatabaseIfNotExist=true
-      SPRING_DATASOURCE_USERNAME: root  # Match MySQL root username
-      SPRING_DATASOURCE_PASSWORD: root  # Match the MySQL root password set above
-    restart: unless-stopped  # Automatically restart the container unless it is stopped
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/devops?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    ports:
+      - "8089:8089"
+    depends_on:
+      - mysql
+    networks:
+      - springboot-mysql-network
 
 volumes:
-  mysql-data:  # Named volume for MySQL data persistence
+  mysql_data:
+
+networks:
+  springboot-mysql-network:
+    driver: bridge
