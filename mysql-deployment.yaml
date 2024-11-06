@@ -1,20 +1,18 @@
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-
----
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: mysql
+  name: houcem-mysql-deployment
+  annotations:
+    description: "this is a deployment for mysql database instance"
+  labels:
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/instance: mysql-abc
+    app.kubernetes.io/version: "8.0"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: houcem-solution
+    app.kubernetes.io/managed-by: kubectl
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: mysql
@@ -23,33 +21,41 @@ spec:
       labels:
         app: mysql
     spec:
+      terminationGracePeriodSeconds: 10
       containers:
-      - name: mysql
-        image: mysql:8.0
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_DATABASE
-          value: "devops"
-        - name: MYSQL_ALLOW_EMPTY_PASSWORD
-          value: "yes"
-        volumeMounts:
-        - name: mysql-storage
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-storage
-        persistentVolumeClaim:
-          claimName: mysql-pvc
-
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_DATABASE
+              value: "devops"
+            - name: MYSQL_ALLOW_EMPTY_PASSWORD
+              value: "yes"
+          ports:
+            - containerPort: 3306
+  #         volumeMounts:
+  #           - name: houcem-vct
+  #             mountPath: /var/lib/mysql          
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: houcem-vct
+  #   spec:
+  #     accessModes: [ "ReadWriteOnce" ]
+  #     #storageClassName: "gp2" jareb ken tfassa5ha yet3adelek wela le  (gp2->mte3 aws moch Azure)
+  #     resources:
+  #       requests:
+  #         storage: 500Mi
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: mysql
+  name: houcem-mysql-service
+  labels:
+    app.kubernetes.io/name: houcem-mysql-service
+    app.kubernetes.io/instance: houcem-mysql-service-abc
+    app: houcem-mysql-service
 spec:
   ports:
-  - port: 3306
-    targetPort: 3306
+    - port: 3306
+  clusterIP: None 
   selector:
     app: mysql
-  clusterIP: None  # Headless service to allow direct communication within the cluster
