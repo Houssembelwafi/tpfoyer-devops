@@ -27,9 +27,11 @@ spec:
           image: mysql:8.0
           env:
             - name: MYSQL_DATABASE
-              value: "devops"
+              value: "devops"   # Cette base de données sera créée automatiquement si elle n'existe pas
+            - name: MYSQL_ROOT_PASSWORD
+              value: ""  # Mot de passe vide selon votre fichier app.properties
             - name: MYSQL_ALLOW_EMPTY_PASSWORD
-              value: "yes"
+              value: "yes"  # Permet de se connecter sans mot de passe
           ports:
             - containerPort: 3306
   #         volumeMounts:
