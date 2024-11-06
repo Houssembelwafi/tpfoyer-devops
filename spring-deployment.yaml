@@ -32,10 +32,10 @@ metadata:
   name: backend-service
 spec:
   selector:
-    app: backend-service
+    app: backend
   ports:
     - protocol: TCP
       port: 8089
       targetPort: 8089
-  type: LoadBalancer
+  type: ClusterIP
 
